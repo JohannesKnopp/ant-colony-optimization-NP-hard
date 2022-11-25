@@ -1,5 +1,3 @@
-import networkx as nx
-import matplotlib.pyplot as plt
 import json
 import numpy as np
 
@@ -59,7 +57,3 @@ class Graph:
 
     def __str__(self):
         return json.dumps(self.graph_dict, indent=4).__str__()
-
-    # def visualize(self):
-    #     G = nx.Graph()
-    #     nx.draw()

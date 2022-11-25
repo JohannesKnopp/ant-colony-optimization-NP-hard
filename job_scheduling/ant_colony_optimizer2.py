@@ -1,9 +1,10 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 class AntColonyOptimizer:
 
-    def __init__(self, graph, ants, evaporation_rate, intensification, alpha=1.0, beta=0.0,
+    def __init__(self, job, ants, evaporation_rate, intensification, alpha=1.0, beta=0.0,
                  beta_evaporation_rate=0, choose_best=0.1, tmax=100):
         self.ants = ants
         self.evaporation_rate = evaporation_rate
@@ -15,8 +16,13 @@ class AntColonyOptimizer:
         self.tmax = tmax
 
         # Internal representations
-        self.graph = graph
-        self.adj_matrix = graph.to_adj_matrix()
+        # self.adj_matrix = np.invert(np.eye(len(job['Labels'])))
+        # self.adj_matrix = graph.to_adj_matrix()
+        n = len(job['Profits'])
+        self.adj_matrix = np.repeat(job['Profits'], repeats=n, axis=0).reshape(n, n)
+        np.fill_diagonal(self.adj_matrix, 0)
+
+        print(self.adj_matrix.shape)
         self.pheromone_matrix = np.invert(np.isnan(self.adj_matrix)).astype(float)
 
         self.heuristic_matrix = self.pheromone_matrix
@@ -99,7 +105,6 @@ class AntColonyOptimizer:
         y = coords[1]
         self.pheromone_matrix[x, y] += self.intensification
 
-    # TODO prevent picking same node multiple times
     def fit(self):
         for t in range(self.tmax):
             paths = []
@@ -139,3 +144,6 @@ class AntColonyOptimizer:
             print(f'Iteration {t + 1}/{self.tmax}: Best Score = {best_score}, Global Best Score = {self.best_score}')
 
         print(f'Best fit: Score = {self.best_score}, Path = {self.best_path}')
+        plt.figure(figsize=(18, 12))
+        plt.plot(self.best_series)
+        plt.show()
